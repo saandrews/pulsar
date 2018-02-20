@@ -73,6 +73,7 @@ spec:
             labels:
                 app: pulsar
                 component: prometheus
+                role: zk
         spec:
             containers:
               - name: prometheus
@@ -100,6 +101,7 @@ metadata:
     labels:
         app: pulsar
         component: prometheus
+        role: zk
 spec:
     ports:
       - port: 9090
@@ -124,6 +126,7 @@ spec:
             labels:
                 app: pulsar
                 component: grafana
+                role: zk
         spec:
             containers:
               - name: grafana
@@ -143,6 +146,7 @@ metadata:
     labels:
         app: pulsar
         component: grafana
+        role: zk
 spec:
     ports:
       - port: 3000
@@ -168,6 +172,7 @@ spec:
             labels:
                 app: pulsar
                 component: dashboard
+                role: zk
         spec:
             containers:
               - name: grafana
@@ -187,6 +192,7 @@ metadata:
     labels:
         app: pulsar
         component: dashboard
+        role: zk
 spec:
     ports:
       - port: 80

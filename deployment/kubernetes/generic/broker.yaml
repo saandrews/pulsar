@@ -25,10 +25,11 @@ metadata:
 data:
     # Tune for available memory. Increase the heap up to 24G to have
     # better GC behavior at high throughput
-    PULSAR_MEM: "\" -Xms1g -Xmx1g -XX:MaxDirectMemorySize=1g\""
+    PULSAR_MEM: "\" -Dio.netty.leakDetectionLevel=disabled -Dio.netty.recycler.linkCapacity=1024 -XX:+ParallelRefProcEnabled -XX:+UnlockExperimentalVMOptions -XX:+AggressiveOpts -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=32 -XX:ConcGCThreads=32 -XX:G1NewSizePercent=50 -XX:+DisableExplicitGC -XX:-ResizePLAB -XX:+ExitOnOutOfMemoryError -XX:+PerfDisableSharedMem -Xms22g -Xmx22g -XX:MaxDirectMemorySize=22g -Dpulsar.root.logger=DEBUG,FILE \""
+    PULSAR_GC: "\" -XX:+UseG1GC -XX:MaxGCPauseMillis=10\""
     zookeeperServers: zk-0.zookeeper,zk-1.zookeeper,zk-2.zookeeper
     globalZookeeperServers: zk-0.zookeeper,zk-1.zookeeper,zk-2.zookeeper
-    clusterName: us-central
+    clusterName: us-east
 ---
 ##
 ## Broker deployment definition
@@ -37,23 +38,29 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
     name: broker
+    labels:
+        app: pulsar
+        component: broker
+        role: broker
 spec:
-    replicas: 3
+    replicas: 1
     template:
         metadata:
             labels:
                 app: pulsar
                 component: broker
+                role: broker
             annotations:
                 prometheus.io/scrape: "true"
                 prometheus.io/port: "8080"
         spec:
             containers:
               - name: broker
-                image: apachepulsar/pulsar:latest
+                image: apachepulsar/pulsar:1.20.0-incubating
                 command: ["sh", "-c"]
                 args:
                   - >
+                    mkdir logs &&
                     bin/apply-config-from-env.py conf/broker.conf &&
                     bin/apply-config-from-env.py conf/pulsar_env.sh &&
                     bin/pulsar broker
@@ -70,6 +77,8 @@ spec:
                    valueFrom:
                        fieldRef:
                            fieldPath: status.podIP
+            nodeSelector:
+              beta.kubernetes.io/instance-type: r4.2xlarge
 ---
 
 ##
@@ -84,6 +93,7 @@ metadata:
     labels:
         app: pulsar
         component: broker
+        role: broker
 spec:
     ports:
       - port: 8080
@@ -103,10 +113,13 @@ apiVersion: v1
 kind: Pod
 metadata:
     name: pulsar-admin
+    labels:
+        app: pulsar
+        role: admin
 spec:
     containers:
       - name: pulsar-admin
-        image: apachepulsar/pulsar:latest
+        image: apachepulsar/pulsar:1.20.0-incubating
         command: ["sh", "-c"]
         args:
           - >
@@ -120,3 +133,4 @@ spec:
             value: http://broker:8080/
           - name: brokerServiceUrl
             value: pulsar://broker:6650/
+
