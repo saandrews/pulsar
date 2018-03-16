@@ -1,0 +1,22 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: xfs-storage-classj
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  fsType: xfs
+#  opts: defaults,noatime,nodiscard
+  state: mounted
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: journal-disk-claim
+spec:
+  storageClassName: xfs-storage-classj
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi

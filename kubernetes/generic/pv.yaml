@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: ledger-disk
+  labels:
+    type: amazonEBS
+spec:
+  storageClassName: xfs-storage-class
+  capacity:
+    storage: 1000Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-id
+    fsType: xfs

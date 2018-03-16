@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: journal-disk
+  labels:
+    type: amazonEBS
+spec:
+  storageClassName: xfs-storage-classj
+  capacity:
+    storage: 200Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-id
+    fsType: xfs

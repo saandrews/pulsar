@@ -20,7 +20,7 @@
 FROM openjdk:8-jdk
 
 # Install some utilities
-RUN apt-get update && apt-get install -y netcat dnsutils
+RUN apt-get update && apt-get install -y netcat dnsutils sysstat net-tools xfsprogs e2fsprogs
 
 ARG VERSION
 

@@ -29,23 +29,23 @@ if [[ ${TRAVIS_TAG} == *"candidate"* || ${TRAVIS_TAG} == *"rc"* ]]; then
     exit 0
 fi
 
-if [ -z "$DOCKER_USER" ]; then
-    echo "Docker user in variable \$DOCKER_USER was not set. Skipping image publishing"
-    exit 1
-fi
+#if [ -z "$DOCKER_USER" ]; then
+#    echo "Docker user in variable \$DOCKER_USER was not set. Skipping image publishing"
+#    exit 1
+#fi
 
-if [ -z "$DOCKER_PASSWORD" ]; then
-    echo "Docker password in variable \$DOCKER_PASSWORD was not set. Skipping image publishing"
-    exit 1
-fi
+##if [ -z "$DOCKER_PASSWORD" ]; then
+#    echo "Docker password in variable \$DOCKER_PASSWORD was not set. Skipping image publishing"
+#    exit 1
+#fi
 
-DOCKER_ORG="${DOCKER_ORG:-apachepulsar}"
+DOCKER_ORG="${DOCKER_ORG:-saandrews}"
 
-docker login ${DOCKER_REGISTRY} -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
-if [ $? -ne 0 ]; then
-    echo "Failed to loging to Docker Hub"
-    exit 1
-fi
+#docker login ${DOCKER_REGISTRY} -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+#if [ $? -ne 0 ]; then
+#    echo "Failed to loging to Docker Hub"
+#    exit 1
+#fi
 
 MVN_VERSION=`./get-version.sh`
 echo "Pulsar version: ${MVN_VERSION}"
